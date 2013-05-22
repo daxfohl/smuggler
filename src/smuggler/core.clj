@@ -3,23 +3,23 @@
 
 (defrecord Doll [name weight value])
 
+(defn get-value [seq]
+  (reduce #(+ %1 (:value %2)) 0 seq))
+
 (defn m [seq w]
   (let [head (first seq)
         tail (rest seq)
         head-w (:weight head)
         head-v (:value head)]
     (if (= head nil)
-      {:value 0 :flags '()}
-      (if (> head-w w)
-        (let [without-head-init (m tail w)]
-            {:value (:value without-head-init) :flags (cons false (:flags without-head-init))})
-        (let [without-head-init (m tail w)
-              with-head-init (m tail (- w head-w))
-              without-head-value (:value without-head-init)
-              with-head-value (+ head-v (:value with-head-init))]
-          (if (> without-head-value with-head-value)
-            {:value without-head-value :flags (cons false (:flags without-head-init))}
-            {:value with-head-value :flags (cons true (:flags with-head-init))}))))))
+      '()
+      (let [without-head (m tail w)]
+        (if (> head-w w)
+          without-head
+          (let [with-head (cons head (m tail (- w head-w)))]
+            (if (> (get-value without-head) (get-value with-head))
+              without-head
+              with-head)))))))
 
 (def dolls
   [(Doll. "luke" 9 150)
