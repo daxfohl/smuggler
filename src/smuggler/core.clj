@@ -7,19 +7,17 @@
   (reduce #(+ %1 (:value %2)) 0 seq))
 
 (defn m [seq w]
-  (let [head (first seq)
-        tail (rest seq)
-        head-w (:weight head)
-        head-v (:value head)]
-    (if (= head nil)
-      '()
-      (let [without-head (m tail w)]
-        (if (> head-w w)
-          without-head
-          (let [with-head (cons head (m tail (- w head-w)))]
-            (if (> (get-value without-head) (get-value with-head))
-              without-head
-              with-head)))))))
+  (if (= seq '())
+    '()
+    (let [head (first seq)
+          tail (rest seq)
+          without-head (m tail w)]
+      (if (> (:weight head) w)
+        without-head
+        (let [with-head (cons head (m tail (- w (:weight head))))]
+          (if (> (get-value without-head) (get-value with-head))
+            without-head
+            with-head))))))
 
 (def dolls
   [(Doll. "luke" 9 150)
