@@ -29,7 +29,10 @@
 
 (defn getf [s] (Float/parseFloat s))
 
-
+(deftest aggregation-of-values-works
+  (testing "aggregate-value returns the sum of value fields"
+    (is (= (aggregate-value dolls) 1272))
+    (is (= (aggregate-value []) 0))))
 
 (deftest algorithm-works-on-sample
   (testing "Algorithm provides the correct result with the given sample"
