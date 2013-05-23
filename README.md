@@ -13,11 +13,10 @@ Clone this repository into a workstation that has lein and clojure installed.
 ## Examples
 
 A sample input file would be of format:
-<code>
-100
-harold,80,49
-will,60,82
-</code>
+
+    100
+    harold,80,49
+    will,60,82
 
 ### Bugs
 
