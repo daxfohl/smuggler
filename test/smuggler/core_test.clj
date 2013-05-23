@@ -29,10 +29,12 @@
 
 (defn getf [s] (Float/parseFloat s))
 
+
+
 (deftest algorithm-works-on-sample
   (testing "Algorithm provides the correct result with the given sample"
     (let [output (m dolls 400)]
-      (is (= (get-value output) 1030))
+      (is (= (aggregate-value output) 1030))
       (is (= (count output) 12)))))
 
 (deftest algorithm-works-on-empty-set
@@ -85,4 +87,5 @@
     (is (= [FILE-INVALID nil] (parse-data "400\nbad-doll")))
     (is (= [OK [[]  (getf "400")]] (parse-data "400")))
     (is (= [OK [[(Doll. "a" (getf "1") (getf "1"))] (getf "400")]] (parse-data "400\na,1,1")))))
+
 

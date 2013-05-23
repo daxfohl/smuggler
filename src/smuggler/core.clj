@@ -1,38 +1,45 @@
 (ns smuggler.core
   (:gen-class))
 
-(defrecord Doll [name weight value])
-
-(defn aggregate-value
-  "Aggregates the value of all the value fields in a seq of Dolls"
-  [seq]
-  (reduce #(+ %1 (:value %2)) 0 seq))
-
-(defn m
-  "Calculates an optimal set of dolls that provides the most value but is under the weight limit given.
-  This algorithm assumes all weights are non-negative, and may produce suboptimal results if negative
-  weights are supplied."
-  [seq w]
-  (if (= seq '())
-    '()
-    (let [head (first seq)
-          tail (rest seq)
-          without-head (m tail w)
-          head-weight (:weight head)]
-      (if (neg? head-weight)
-        (throw (IllegalArgumentException. "negative weights not supported"))
-        (if (> head-weight w)
-          without-head
-          (let [with-head (cons head (m tail (- w head-weight)))]
-            (if (> (aggregate-value without-head) (aggregate-value with-head))
-              without-head
-              with-head)))))))
-
 (def ^:const OK 0)
 (def ^:const NO-FILENAME-GIVEN 1)
 (def ^:const FILE-NOT-FOUND 2)
 (def ^:const FILE-EMPTY 3)
 (def ^:const FILE-INVALID 4)
+
+(defrecord Doll [name weight value])
+
+(defn aggregate-by
+  "Aggregates the value of all the value fields in a seq of Dolls"
+  [dolls]
+  (reduce #(+ %1 (:value %2)) 0 dolls))
+
+(defn max-by
+  "Gets the max value given a key function"
+  [keyfn coll]
+  (reduce #(if (> (keyfn %1) (keyfn %2)) %1 %2) coll))
+
+(defn m
+  "Calculates an optimal set of dolls that provides the most value but is under the weight limit given.
+  This algorithm assumes all weights are non-negative, and may produce suboptimal results if negative
+  weights are supplied."
+  [dolls w]
+  (if (= dolls '())
+    '()                                    ; recursive stop condition
+    (let [head (first dolls)
+          tail (rest dolls)
+          without-head (m tail w)
+          head-weight (:weight head)]
+      (if (neg? head-weight)
+        (throw (IllegalArgumentException. "negative weights not supported"))
+        ; if this item alone is heavier than the allowed weight,
+        ; return the calculation of `(m tail w)` immediately.
+        (if (> head-weight w)
+          without-head
+          ; otherwise calculate the optimal value *with* this item,
+          ; and return the max of (that value, `(m tail w)`).
+          (let [with-head (cons head (m tail (- w head-weight)))]
+            (max-by aggregate-value [with-head without-head])))))))
 
 (defn print-dolls
   "Pretty-prints each doll to the console"
@@ -139,6 +146,6 @@
       (run-with-file filename))))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Main entrypoint to program; expects the input file path to be the only command-line argument"
   [& args]  
   (System/exit (run args)))
