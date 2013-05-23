@@ -5,6 +5,7 @@ This program is a command-line implementation of the recursive solution of the 0
 ## Installation
 
 Clone this repository into a workstation that has lein and clojure installed.
+This was developed and tested against Leiningen 2.0.0 on Java 1.7.0_21 Java HotSpot(TM) Client VM.
 
 ## Usage
 
