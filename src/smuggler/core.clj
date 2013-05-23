@@ -91,7 +91,7 @@
   `contents` is a multi-line string where the first line that contains the `weight` in `float` format,
   followed by N lines of doll strings (see `parse-doll`)"
   [contents]
-  (let [lines (clojure.string/split-lines contents)]
+  (let [lines (remove clojure.string/blank? (clojure.string/split-lines contents))]
     (if (or (= lines '()) (= contents ""))
       (do (prn "Requested file is empty")
           [FILE-EMPTY nil])
