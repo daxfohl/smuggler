@@ -8,33 +8,36 @@
 (def ^:const FILE-INVALID 4)
 
 (defrecord Doll [name weight value])
+(defrecord Calc [dolls sum-value])
 
 (defn aggregate-value
   "Aggregates the value of all the value fields in a seq of Dolls"
   [dolls]
   (reduce #(+ %1 (:value %2)) 0 dolls))
 
+(defn add-doll [doll calc]
+  (Calc. (conj (:dolls calc) doll) (+ (:sum-value calc) (:value doll))))
+
+(defn next-cell [prev-vector doll j]
+  (let [heaviest-set-without-head (nth prev-vector j)
+        doll-weight (:weight doll)]
+    (if (> doll-weight j)
+      heaviest-set-without-head
+      (let [heaviest-set-allowing-head (nth prev-vector (- j doll-weight))
+            heaviest-set-with-head (add-doll doll heaviest-set-allowing-head)]
+        (max-key :sum-value heaviest-set-without-head heaviest-set-with-head)))))
+
+(defn next-vector [prev-vector doll]
+  (vec (map #(next-cell prev-vector doll %1) (range (count prev-vector)))))
+
 (defn m
   "Calculates an optimal set of dolls that provides the most value but is under the weight limit given.
   This algorithm assumes all weights are non-negative, and may produce suboptimal results if negative
   weights are supplied."
   [dolls w]
-  (if (= dolls '())
-    '()                                    ; recursive stop condition
-    (let [head (first dolls)
-          tail (rest dolls)
-          heaviest-set-without-head (m tail w)
-          head-weight (:weight head)]
-      (if (neg? head-weight)
-        (throw (IllegalArgumentException. "negative weights not supported"))
-        ; if this item alone is heavier than the allowed weight,
-        ; return the calculated heaviest-set-without-head immediately.
-        (if (> head-weight w)
-          heaviest-set-without-head
-          ; otherwise calculate the heaviest set *with* this item,
-          ; and return the max of those two options.
-          (let [heaviest-set-with-head (cons head (m tail (- w head-weight)))]
-            (max-key aggregate-value heaviest-set-with-head heaviest-set-without-head)))))))
+  (let [m0 (vec (repeat (+ 1 w) (Calc. [] 0)))
+        mf (reduce next-vector m0 dolls)]
+    (:dolls (last mf))))
 
 (defn print-dolls
   "Pretty-prints each doll to the console"
@@ -51,7 +54,7 @@
 (defn try-parse-float
   "Parses a float string, or returns nil if string is invalid"
   [s]
-  (try (Float/parseFloat s)
+  (try (Integer/parseInt s)
        (catch Exception e
          (do (prn (str "Value string given by \"" s "\" is not valid."))
              nil))))

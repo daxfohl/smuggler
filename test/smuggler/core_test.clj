@@ -27,7 +27,7 @@
    (Doll. "sally" 4 50)
    (Doll. "babe" 30 10)])
 
-(defn getf [s] (Float/parseFloat s))
+(defn getf [s] (Integer/parseInt s))
 
 (deftest aggregation-of-values-works
   (testing "aggregate-value returns the sum of value fields"
@@ -56,9 +56,8 @@
 
 (deftest try-parse-float-works
   (testing "try-parse-float returns the correct number or nil"
-    (is (= (try-parse-float "38.3") (getf "38.3")))
+    (is (= (try-parse-float "38") (getf "38")))
     (is (= (try-parse-float "-5") (getf "-5")))
-    (is (not (nil? (try-parse-float " 39 "))))
     (is (nil? (try-parse-float "fisidj")))))
 
 (deftest doll-valid-works
