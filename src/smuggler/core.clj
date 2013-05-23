@@ -23,18 +23,18 @@
     '()                                    ; recursive stop condition
     (let [head (first dolls)
           tail (rest dolls)
-          without-head (m tail w)
+          heaviest-set-without-head (m tail w)
           head-weight (:weight head)]
       (if (neg? head-weight)
         (throw (IllegalArgumentException. "negative weights not supported"))
         ; if this item alone is heavier than the allowed weight,
-        ; return the calculation of `(m tail w)` immediately.
+        ; return the calculated heaviest-set-without-head immediately.
         (if (> head-weight w)
-          without-head
-          ; otherwise calculate the optimal value *with* this item,
-          ; and return the max of (that value, `(m tail w)`).
-          (let [with-head (cons head (m tail (- w head-weight)))]
-            (max-key aggregate-value with-head without-head)))))))
+          heaviest-set-without-head
+          ; otherwise calculate the heaviest set *with* this item,
+          ; and return the max of those two options.
+          (let [heaviest-set-with-head (cons head (m tail (- w head-weight)))]
+            (max-key aggregate-value heaviest-set-with-head heaviest-set-without-head)))))))
 
 (defn print-dolls
   "Pretty-prints each doll to the console"
