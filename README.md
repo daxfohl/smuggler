@@ -14,6 +14,12 @@ Clone this repository into a workstation that has lein and clojure installed.
 
 A sample input file would be of format:
 
+    max-weight
+    name1,weight1,value1
+    name2,weight2,value2
+
+For example
+	
     100
     harold,80,49
     will,60,82
