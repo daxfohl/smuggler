@@ -17,7 +17,7 @@
           tail (rest seq)
           without-head (m tail w)
           head-weight (:weight head)]
-      (if (< head-weight 0)
+      (if (neg? head-weight)
         (throw (IllegalArgumentException. "negative weights not supported"))
         (if (> head-weight w)
           without-head
@@ -44,7 +44,9 @@
 
 (defn try-parse-float [s]
   (try (Float/parseFloat s)
-       (catch Exception e nil)))
+       (catch Exception e
+         (do (prn (str "Value string given by \"" s "\" is not valid."))
+             nil))))
 
 (defn doll-valid? [doll]
   (let [name (:name doll)
@@ -58,7 +60,10 @@
         [name weight-string value-string] split
         [weight value] (map try-parse-float [weight-string value-string])
         doll (Doll. name weight value)]
-    (if (doll-valid? doll) doll nil)))
+    (if (doll-valid? doll)
+      doll
+      (do (prn (str "Doll string given by \"" s "\" is not valid."))
+          nil))))
 
 (defn parse-dolls [strings]
   (let [dolls (map parse-doll strings)]
@@ -66,7 +71,7 @@
 
 (defn parse-data [contents]
   (let [lines (clojure.string/split-lines contents)]
-    (if (= lines '())
+    (if (or (= lines '()) (= contents ""))
       (do (prn "Requested file is empty")
           [FILE-EMPTY nil])
       (let [head (first lines)
