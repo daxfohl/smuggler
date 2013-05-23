@@ -24,6 +24,8 @@ For example
     100
     harold,80,49
     will,60,82
+	
+Floating point weights and values are supported, but negative weights and values are not.
 
 ### Bugs
 
