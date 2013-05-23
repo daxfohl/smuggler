@@ -9,15 +9,10 @@
 
 (defrecord Doll [name weight value])
 
-(defn aggregate-by
+(defn aggregate-value
   "Aggregates the value of all the value fields in a seq of Dolls"
   [dolls]
   (reduce #(+ %1 (:value %2)) 0 dolls))
-
-(defn max-by
-  "Gets the max value given a key function"
-  [keyfn coll]
-  (reduce #(if (> (keyfn %1) (keyfn %2)) %1 %2) coll))
 
 (defn m
   "Calculates an optimal set of dolls that provides the most value but is under the weight limit given.
@@ -39,7 +34,7 @@
           ; otherwise calculate the optimal value *with* this item,
           ; and return the max of (that value, `(m tail w)`).
           (let [with-head (cons head (m tail (- w head-weight)))]
-            (max-by aggregate-value [with-head without-head])))))))
+            (max-key aggregate-value with-head without-head)))))))
 
 (defn print-dolls
   "Pretty-prints each doll to the console"
