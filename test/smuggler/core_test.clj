@@ -1,7 +1,8 @@
 (ns smuggler.core-test
   (:use clojure.test
         smuggler.core)
-  (:import smuggler.core.Doll))
+  (:import smuggler.core.Doll)
+  (:import smuggler.core.Calc))
 
 (def dolls
   [(Doll. "luke" 9 150)
@@ -27,7 +28,11 @@
    (Doll. "sally" 4 50)
    (Doll. "babe" 30 10)])
 
-(defn getf [s] (Integer/parseInt s))
+(defn geti [s] (Integer/parseInt s))
+
+(deftest add-doll-works
+  (testing "Adding a new doll conjs it to the list and adds the value to the cache"
+    (is (= (add-doll (nth dolls 0) (Calc. [] 0)) (Calc. [(nth dolls 0)] 150)))))
 
 (deftest aggregation-of-values-works
   (testing "aggregate-value returns the sum of value fields"
@@ -56,8 +61,8 @@
 
 (deftest try-parse-float-works
   (testing "try-parse-float returns the correct number or nil"
-    (is (= (try-parse-float "38") (getf "38")))
-    (is (= (try-parse-float "-5") (getf "-5")))
+    (is (= (try-parse-float "38") (geti "38")))
+    (is (= (try-parse-float "-5") (geti "-5")))
     (is (nil? (try-parse-float "fisidj")))))
 
 (deftest doll-valid-works
@@ -73,7 +78,7 @@
   (testing "parse-doll returns correctly parsed dolls for valid dollstrings but nil for invalid ones"
     (is (nil? (parse-doll "")))
     (is (nil? (parse-doll "a,1,-1")))
-    (is (= (Doll. "a" (getf "1") (getf "1")) (parse-doll "a,1,1")))))
+    (is (= (Doll. "a" (geti "1") (geti "1")) (parse-doll "a,1,1")))))
 
 (deftest parse-dolls-works
   (testing "parse-dolls returns correctly parsed dolls for valid dollstrings but nil if any is invalid"
@@ -87,7 +92,7 @@
     (is (= [FILE-EMPTY nil] (parse-data "")))
     (is (= [FILE-INVALID nil] (parse-data "x")))
     (is (= [FILE-INVALID nil] (parse-data "400\nbad-doll")))
-    (is (= [OK [[]  (getf "400")]] (parse-data "400")))
-    (is (= [OK [[(Doll. "a" (getf "1") (getf "1"))] (getf "400")]] (parse-data "400\na,1,1")))))
+    (is (= [OK [[]  (geti "400")]] (parse-data "400")))
+    (is (= [OK [[(Doll. "a" (geti "1") (geti "1"))] (geti "400")]] (parse-data "400\na,1,1")))))
 
 

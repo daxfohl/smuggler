@@ -1,6 +1,6 @@
 # smuggler
 
-This program is a command-line implementation of the recursive solution of the 0/1 Knapsack problem in Clojure.
+This program is a command-line implementation of the recursive solution of the 0/1 Knapsack problem in Clojure.  It allows only integers and thus is able to use the integer-weight pseudopolynomial solution from wikipedia.  It transforms the loop into a tail-recursion-friendly `reduce` function, so there is no chance of blowing the stack.  It is much faster than the floating-point version in `master`, assuming the max-weight is not large compared to factorial of the number of dolls.
 
 ## Installation
 
@@ -25,16 +25,15 @@ For example
     harold,80,49
     will,60,82
 	
-Floating point weights and values are supported, but negative weights and values are not.
+Only natural number weights and values are supported.
 
 ### Bugs
 
-The method m (named after the `m` function in the Knapsack Problem wikipedia article) is not tail-recursive and will explode for a long-enough list of dolls.  However the algorithm is exponential time wrt the number of dolls, so a list of dolls long enough to blow the stack would also take decades to compute on modern hardware.  By that time all your clients will have moved on to another dealer.
+None known
 
 ### Future Releases
 
 * Separate puzzle logic and parsing logic onto different files.
-* Investigate pseudo-polynomial algorithm on wikipedia page; while the article claims it only works on integer weights, but if we index the weights it should work in that way too.
 
 ## License
 

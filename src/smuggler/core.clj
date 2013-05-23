@@ -15,10 +15,15 @@
   [dolls]
   (reduce #(+ %1 (:value %2)) 0 dolls))
 
-(defn add-doll [doll calc]
+(defn add-doll
+  "Adds a doll to the `Calc` record, meaning it conjugates it to the vector and increases the cached value"
+  [doll calc]
   (Calc. (conj (:dolls calc) doll) (+ (:sum-value calc) (:value doll))))
 
-(defn next-cell [prev-vector doll j]
+(defn next-cell
+  "Determines the next cell at index `j` given the previous vector and the current doll in the `m` algorithm
+  from wikipedia's Knapsack Problem page"
+  [prev-vector doll j]
   (let [heaviest-set-without-head (nth prev-vector j)
         doll-weight (:weight doll)]
     (if (> doll-weight j)
@@ -27,12 +32,14 @@
             heaviest-set-with-head (add-doll doll heaviest-set-allowing-head)]
         (max-key :sum-value heaviest-set-without-head heaviest-set-with-head)))))
 
-(defn next-vector [prev-vector doll]
+(defn next-vector
+  "Determines the next vector in the reduction of the `m` algorithm from wikipedia's Knapsack Problem page"
+  [prev-vector doll]
   (vec (map #(next-cell prev-vector doll %1) (range (count prev-vector)))))
 
 (defn m
   "Calculates an optimal set of dolls that provides the most value but is under the weight limit given.
-  This algorithm assumes all weights are non-negative, and may produce suboptimal results if negative
+  This algorithm assumes all weights are non-negative integers, and may produce suboptimal results if negative
   weights are supplied."
   [dolls w]
   (let [m0 (vec (repeat (+ 1 w) (Calc. [] 0)))
@@ -51,10 +58,10 @@
   (let [dolls-to-keep (m dolls weight)]
     (print-dolls dolls-to-keep)))
 
-(defn try-parse-float
-  "Parses a float string, or returns nil if string is invalid"
+(defn try-parse-int
+  "Parses an int string, or returns nil if string is invalid"
   [s]
-  (try (Integer/parseInt s)
+  (try (Integer/parseInt (clojure.string/trim s))
        (catch Exception e
          (do (prn (str "Value string given by \"" s "\" is not valid."))
              nil))))
