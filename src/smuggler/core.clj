@@ -19,10 +19,8 @@
   This algorithm assumes all weights are non-negative, and may produce suboptimal results if negative
   weights are supplied."
   [dolls w]
-  (if (= dolls '())
-    '()                                    ; recursive stop condition
-    (let [head (first dolls)
-          tail (rest dolls)
+  (if (empty? dolls) '() ; recursive stop condition
+    (let [[head & tail] dolls
           heaviest-set-without-head (m tail w)
           head-weight (:weight head)]
       (if (neg? head-weight)
@@ -92,11 +90,10 @@
   followed by N lines of doll strings (see `parse-doll`)"
   [contents]
   (let [lines (remove clojure.string/blank? (clojure.string/split-lines contents))]
-    (if (or (= lines '()) (= contents ""))
+    (if (or (empty? lines) (empty? contents))
       (do (prn "Requested file is empty")
           [FILE-EMPTY nil])
-      (let [head (first lines)
-            tail (rest lines)
+      (let [[head & tail] lines
             weight (try-parse-float head)
             dolls (parse-dolls tail)
             result [dolls weight]]
@@ -134,7 +131,7 @@
 (defn run
   "Runs the smuggler algorithm given the command-line arguments and returns the exit code"
   [args]
-  (if (= args '())
+  (if (empty? args)
     (do (prn "Supply a filename at the command prompt")
         NO-FILENAME-GIVEN)
     (let [filename (first args)]

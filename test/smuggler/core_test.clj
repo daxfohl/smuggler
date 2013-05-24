@@ -42,7 +42,7 @@
 
 (deftest algorithm-works-on-empty-set
   (testing "Empty set should always return empty set"
-    (is (= '() (m [] 400)))))
+    (is (empty? (m [] 400)))))
 
 (deftest algorithm-works-on-zero-weight
   (testing "Algorithm will provide only zero-weight dolls if zero weight allowed"
@@ -53,6 +53,7 @@
 (deftest algorithm-throws-on-negative-doll-weight
   (testing "Algorithm will abort with an exception if the weight is negative"
     (is (thrown? IllegalArgumentException (m [(Doll. "-1" -1 20)])))))
+
 
 (deftest try-parse-float-works
   (testing "try-parse-float returns the correct number or nil"
@@ -78,7 +79,7 @@
 
 (deftest parse-dolls-works
   (testing "parse-dolls returns correctly parsed dolls for valid dollstrings but nil if any is invalid"
-    (is (= '() (parse-dolls [])))
+    (is (empty? (parse-dolls [])))
     (is (nil? (parse-dolls ["a,1,1" ""])))
     (is (= 3 (count (parse-dolls (repeat 3 "a,1,1")))))))
 
