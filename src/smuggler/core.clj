@@ -9,11 +9,6 @@
 
 (defrecord Doll [name weight value])
 
-(defn aggregate-value
-  "Aggregates the value of all the value fields in a seq of Dolls"
-  [dolls]
-  (reduce #(+ %1 (:value %2)) 0 dolls))
-
 (defn m
   "Calculates an optimal set of dolls that provides the most value but is under the weight limit given.
   This algorithm assumes all weights are non-negative, and may produce suboptimal results if negative
